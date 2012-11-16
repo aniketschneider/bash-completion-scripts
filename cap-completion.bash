@@ -15,7 +15,7 @@ _cap_complete ()
   COMPREPLY=()
 
   # try to expand anything but options (starting with -) or named parameters (-s ___)
-  if [[ $cur != -* ]] && [[ $prev != '-s' ]]; then
+  if [[ $cur != -* ]] && [[ ! $prev =~ -[sS] ]]; then
     # refresh cache if it doesn't exist, is for the wrong path, or is too old
     if [[ ! -e $cache_file ]] || [[ $(pwd) != $(head -n1 $cache_file)* ]] || [ `find "$cache_file" -mmin +30` ] ; then
       echo "$(pwd)" >$cache_file
