@@ -25,7 +25,7 @@ _cap_complete ()
   fi
 
 } 
-complete -F _cap_complete -o default cap
+complete -F _cap_complete cap
 
 # allow completion of commands including colons
 COMP_WORDBREAKS=${COMP_WORDBREAKS//:}
