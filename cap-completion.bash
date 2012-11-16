@@ -10,17 +10,16 @@ _cap_complete ()
 {
   local cache_file="${HOME}/.cap_completion_cache"
   local cur=${COMP_WORDS[COMP_CWORD]}
+  local prev=${COMP_WORDS[COMP_CWORD-1]}
 
   COMPREPLY=()
 
-  # try to expand anything but options (starting with -)
-  if [[ $cur != -* ]] ; then
+  # try to expand anything but options (starting with -) or named parameters (-s ___)
+  if [[ $cur != -* ]] && [[ $prev != '-s' ]]; then
     # refresh cache if it doesn't exist, is for the wrong path, or is too old
-    if [[ ! -e $cache_file ]] || 
-       [[ $(pwd) != $(head -n1 $cache_file) ]] ||
-       [ `find "$cache_file" -mmin +30` ] ; then
+    if [[ ! -e $cache_file ]] || [[ $(pwd) != $(head -n1 $cache_file)* ]] || [ `find "$cache_file" -mmin +30` ] ; then
       echo "$(pwd)" >$cache_file
-      cap -qT 2>/dev/null | ruby -ne 'puts $_[/^cap (\S+) .*$/,1] if $_ =~ /^cap/' >>$cache_file
+      cap -qT 2>/dev/null | grep '^cap' | awk '{print $2}' >>$cache_file
     fi
     COMPREPLY=( $(compgen -W "$(tail +2 $cache_file)" -- $cur) )
   fi
